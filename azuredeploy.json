@@ -77,15 +77,20 @@
     },
     "nicName":{
       "type":"string",
-      "defaultValue":"[concat('VMNicE-',newGuid())]",
+      "defaultValue":"VMNic-",
       "metadata":{  
-         "description":"Name of the nic of the vm, must be unique in RG"
+         "description":"Prefix name of the nic of the vm"
+      }
+    },
+    "vmName":{
+      "type":"string",
+      "defaultValue":"VM-",
+      "metadata":{  
+         "description":"Prefix name of the nic of the vm"
       }
     }
   },
-  "variables": {
-    "vmName":   "WinVME-"
-  },
+
   "resources": [
     {
       "type": "Microsoft.Network/virtualNetworks",
@@ -147,7 +152,7 @@
     {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2018-10-01",
-      "name": "[concat(variables('vmName'),copyIndex())]",
+      "name": "[concat(parameters('vmName'),copyIndex())]",
       "location": "[parameters('location')]",
       "dependsOn": ["netwintcopy"],
       "properties": {
@@ -155,7 +160,7 @@
           "vmSize": "[parameters('vmsize')]"
         },
         "osProfile": {
-          "computerName": "[concat(variables('vmName'),copyIndex())]",
+          "computerName": "[concat(parameters('vmName'),copyIndex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -167,6 +172,7 @@
             "version": "latest"
           },
           "osDisk": {
+            "name": "[concat('osDisk-',parameters('vmName'),copyIndex())]",
             "createOption": "FromImage"
           }
         },
