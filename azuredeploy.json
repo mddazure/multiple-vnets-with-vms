@@ -1,0 +1,196 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "AzureAdmin",
+      "metadata": {
+        "description": "Username for the Virtual Machine."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "defaultValue": "ANMtest-2020",
+      "metadata": {
+        "description": "Password for the Virtual Machine."
+      }
+    },
+    "windowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2016-Datacenter",
+      "allowedValues": [
+        "2016-Datacenter",
+        "2019-Datacenter"
+      ],
+      "metadata": {
+        "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "westcentralus",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    
+    "copies":{
+        "type": "int",
+        "defaultValue": 1,
+        "maxValue": 254,
+        "minValue": 1,
+        "metadata": {
+            "description":"Number of VNETs and VMs to deploy"
+        }
+    },
+    "vmsize":{
+        "type":"string",
+        "defaultValue": "Standard_A1_v2",
+        "allowedValues": [
+            "Standard_A2_v2",
+            "Standard_A4_v2"
+        ]
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultValue": "anm-vnet-",
+      "metadata": {
+        "description": "Prefix Name of VNETs"
+      }
+    },
+    "existingVirtualNetworkResourceGroup":{  
+      "type":"string",
+      "defaultValue":"[resourceGroup().name]",
+      "metadata":{  
+         "description":"Name of the existing VNET resource group"
+      }
+   },
+    "subnetName": {
+      "type": "string",
+      "defaultValue":"vmSubnet",
+      "metadata": {
+        "description": "Name of the subnet to create in the virtual network"
+      }
+    },
+    "nicName":{
+      "type":"string",
+      "defaultValue":"[concat('VMNicE-',newGuid())]",
+      "metadata":{  
+         "description":"Name of the nic of the vm, must be unique in RG"
+      }
+    }
+  },
+  "variables": {
+    "vmName":   "WinVME-"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+        "apiVersion": "2019-09-01",
+            "name": "[concat(parameters('virtualNetworkName'),copyindex())]",
+            "location": "[parameters('location')]",
+            "dependsOn": [                
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                    "[concat('10.0.',copyindex(),'0/24')]"                      
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "[concat('10.0.',copyindex(),'0/25')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }                                     
+                  ]
+            },
+            "copy": {
+                "name": "vnetcopy",
+                "count": "[parameters('copies')]"
+            }
+    },   
+   {
+    
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(parameters('nicName'),copyIndex())]",
+      "dependsOn":["vnetcopy"],
+      "location": "[parameters('location')]",
+      
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', concat(parameters('virtualNetworkName'),copyindex()),  parameters('subnetName'))]"
+                },
+              "privateIPAllocationMethod": "Dynamic"
+              }
+              
+            }
+        ]
+      },
+      "copy":{
+        "name":"netwintcopy",
+        "count":"[parameters('copies')]"
+    }      
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2018-10-01",
+      "name": "[concat(variables('vmName'),copyIndex())]",
+      "location": "[parameters('location')]",
+      "dependsOn": ["netwintcopy"],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmsize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('vmName'),copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[parameters('windowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage"
+          }
+        },
+          
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('nicName'),copyIndex()))]"
+            }
+          ]
+        },
+        
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": false
+          }
+        }   
+    },
+    "copy":{
+        "name":"vmcopy",
+        "count":"[parameters('copies')]" 
+      }    
+
+  }
+  ],
+  "outputs": {
+    
+  }
+}
