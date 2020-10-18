@@ -27,7 +27,7 @@
         "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
       }
     },
-    
+
     "location": {
       "type": "string",
       "defaultValue": "westcentralus",
@@ -97,14 +97,14 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                    "[concat('10.0.',copyindex(),'0/24')]"                      
+                    "[concat('10.0.',copyindex(),'.0/24')]"                      
                     ]
                 },
                 "subnets": [
                     {
                         "name": "default",
                         "properties": {
-                            "addressPrefix": "[concat('10.0.',copyindex(),'0/25')]",
+                            "addressPrefix": "[concat('10.0.',copyindex(),'.0/25')]",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
