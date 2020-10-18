@@ -102,7 +102,7 @@
                 },
                 "subnets": [
                     {
-                        "name": "default",
+                        "name": "[parameters('subnetName')]",
                         "properties": {
                             "addressPrefix": "[concat('10.0.',copyindex(),'.0/25')]",
                             "delegations": [],
