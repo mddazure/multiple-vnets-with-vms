@@ -2,7 +2,7 @@
 
 ## Test bed for Azure Network Manager
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmddazure%2F101-multiple-vnets-with-vms%2Fmain%2Fazuredeploy.json")
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmddazure%2F101-multiple-vnets-with-vms%2Fmain%2Fazuredeploy.json)
 
 This template deploys specified number of VNETs (1 - 254), each with a small Windows VM. 
 
