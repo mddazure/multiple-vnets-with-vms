@@ -10,7 +10,7 @@ Address space in each VNET is unique: 10.0.<1-254>.0.
 
 Purpose is to provide a test environment for the private preview Azure Network Manager.
 
-:exclamation: your subscription must be white listed for the ANM private preview.
+:exclamation: Your subscription must be white listed for the ANM private preview.
 
 Usage:
 - Create a resource group in West Central US.
