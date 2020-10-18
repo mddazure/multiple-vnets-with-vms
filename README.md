@@ -1,5 +1,7 @@
 # Test bed for Azure Network Manager
-This template deploys specified number of VNETs (1 - 254), each with a small Windows VM. Address space in each VNET is unique: 10.0.<1-254>.0.
+This template deploys specified number of VNETs (1 - 254), each with a small Windows VM. 
+
+Address space in each VNET is unique: 10.0.<1-254>.0.
 
 Purpose is to provide a test environment for the private preview Azure Network Manager.
 
