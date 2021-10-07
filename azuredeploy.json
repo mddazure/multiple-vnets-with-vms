@@ -91,6 +91,10 @@
     }
   },
 
+  "variables": {
+        "customImageId": "/subscriptions/0245be41-c89b-4b46-a3cc-a705c90cd1e8/resourceGroups/image-gallery-rg/providers/Microsoft.Compute/galleries/mddimagegallery/images/windows2019-networktools/versions/2.0.0"
+    },
+
   "resources": [
     {
       "type": "Microsoft.Network/virtualNetworks",
@@ -166,10 +170,11 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
+            "id": "[variables('customImageId')]"
+            /*"publisher": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
             "sku": "[parameters('windowsOSVersion')]",
-            "version": "latest"
+            "version": "latest"*/
           },
           "osDisk": {
             "name": "[concat('osDisk-',parameters('vmName'),copyIndex())]",
