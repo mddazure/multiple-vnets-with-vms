@@ -180,8 +180,7 @@
             "name": "[concat('osDisk-',parameters('vmName'),copyIndex())]",
             "createOption": "FromImage"
           }
-        },
-          
+        },          
         "networkProfile": {
           "networkInterfaces": [
             {
@@ -194,14 +193,33 @@
           "bootDiagnostics": {
             "enabled": false
           }
-        }   
+        }
     },
     "copy":{
         "name":"vmcopy",
         "count":"[parameters('copies')]" 
       }    
+    },
+    {
+    "type": "Microsoft.Compute/virtualMachines/extensions",
+    "apiVersion": "2021-04-01",
+    "name": "[concat(parameters('vmName'), copyIndex(), '/Microsoft.Azure.NetworkWatcher')]",
+    "location": "[parameters('location')]",
+    "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex())]"
+    ],
+    "properties": {
+        "publisher": "Microsoft.Azure.NetworkWatcher",
+        "type": "NetworkWatcherAgentWindows",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true
+    },
+        "copy":{
+        "name":"vmcopy",
+        "count":"[parameters('copies')]" 
+      }
+}
 
-  }
   ],
   "outputs": {
     
