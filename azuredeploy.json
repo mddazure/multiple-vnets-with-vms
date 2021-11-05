@@ -31,7 +31,7 @@
 
     "location": {
       "type": "string",
-      "defaultValue": "westcentralus",
+      "defaultValue": "eastus",
       "metadata": {
         "description": "Location for all resources."
       }
