@@ -69,6 +69,13 @@
          "description":"Name of the existing VNET resource group"
       }
    },
+   "sourceIPaddressRDP":{
+     "type": "string",
+     "defaultValue": "217.122.185.32",
+     "metadata":{
+       "description":"remote desktop source address"
+     }
+   },
     "subnetName": {
       "type": "string",
       "defaultValue":"vmSubnet",
@@ -102,7 +109,8 @@
         "apiVersion": "2019-09-01",
             "name": "[concat(parameters('virtualNetworkName'),copyindex())]",
             "location": "[parameters('location')]",
-            "dependsOn": [                
+            "dependsOn": [    
+              "[resourceId('Microsoft.Network/networkSecurityGroups','anm-nsg')]"            
             ],
             "properties": {
                 "addressSpace": {
@@ -117,7 +125,10 @@
                             "addressPrefix": "[concat('10.0.',copyindex(),'.0/25')]",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
-                            "privateLinkServiceNetworkPolicies": "Enabled"
+                            "privateLinkServiceNetworkPolicies": "Enabled",
+                            "networkSecurityGroup": {
+                              "id":"[resourceId('Microsoft.Network/networkSecurityGroups','anm-nsg')]"
+                            }
                         }
                     }                                     
                   ]
@@ -126,7 +137,38 @@
                 "name": "vnetcopy",
                 "count": "[parameters('copies')]"
             }
-    },   
+    }, 
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-11-01",
+      "name": "anm-nsg",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+                    {
+                        "name": "rdp",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "[parameters('sourceIPaddressRDP')]",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+
+      }
+    },
+
+
+
    {
     
       "type": "Microsoft.Network/networkInterfaces",
