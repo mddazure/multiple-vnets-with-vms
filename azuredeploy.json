@@ -10,7 +10,7 @@
       }
     },
     "adminPassword": {
-      "type": "securestring",
+      "type": "string",
       "defaultValue": "ANMtest-2020",
       "metadata": {
         "description": "Password for the Virtual Machine."
