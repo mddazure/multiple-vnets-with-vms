@@ -16,7 +16,7 @@
         "description": "Password for the Virtual Machine."
       }
     },
-    "windowsOSVersion": {
+   /* "windowsOSVersion": {
       "type": "string",
       "defaultValue": "2016-Datacenter",
       "allowedValues": [
@@ -27,6 +27,7 @@
         "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
       }
     },
+    */
 
     "location": {
       "type": "string",
